@@ -1,42 +1,56 @@
 """
 Taken directly from https://pygame-gui.readthedocs.io/en/latest/quick_start.html as a template.
 """
-
 import pygame
 import pygame_gui
 
-pygame.init()
 
-pygame.display.set_caption('Quick Start')
-window_surface = pygame.display.set_mode((800, 600))
+class RunGame:
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+        self.bkgd_color = pygame.Color('#000000')
 
-background = pygame.Surface((800, 600))
-background.fill(pygame.Color('#000000'))
+        pygame.init()
 
-manager = pygame_gui.UIManager((800, 600))
+        pygame.display.set_caption('Quick Start')
+        self.window_surface = pygame.display.set_mode((self.width, self.height))
 
-hello_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((350, 275), (100, 50)),
-                                            text='Say Hello',
-                                            manager=manager)
+        self.background = pygame.Surface((self.width, self.height))
+        #
+        self.background.fill(self.bkgd_color)
 
-clock = pygame.time.Clock()
-is_running = True
+        self.manager = pygame_gui.UIManager((self.width, self.height))
 
-while is_running:
-    time_delta = clock.tick(60) / 1000.0
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            is_running = False
+        self.rectangle = pygame.Rect((350, 275), (100, 50))
+        self.hello_button = pygame_gui.elements.UIButton(relative_rect=self.rectangle,
+                                                         text='Say Hello',
+                                                         manager=self.manager)
+        self.game_loop()
 
-        if event.type == pygame_gui.UI_BUTTON_PRESSED:
-            if event.ui_element == hello_button:
-                print('Hello World!')
+    def game_loop(self):
+        clock = pygame.time.Clock()
+        is_running = True
 
-        manager.process_events(event)
+        while is_running:
+            time_delta = clock.tick(60) / 1000.0
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    is_running = False
 
-    manager.update(time_delta)
+                if event.type == pygame_gui.UI_BUTTON_PRESSED:
+                    if event.ui_element == self.hello_button:
+                        print('Hello World!')
 
-    window_surface.blit(background, (0, 0))
-    manager.draw_ui(window_surface)
+                self.manager.process_events(event)
 
-    pygame.display.update()
+            self.manager.update(time_delta)
+
+            self.window_surface.blit(self.background, (0, 0))
+            self.manager.draw_ui(self.window_surface)
+
+            pygame.display.update()
+
+
+width, height = 800, 600
+RunGame(width, height)
