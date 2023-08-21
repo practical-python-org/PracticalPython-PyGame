@@ -9,3 +9,4 @@ In response to this, the community is starting a shared PyGame repo, for collabo
 - Be a member of Practical Python on Discord.
 - You must be a member of the Practical Python Organization on Github, DM Xarlos for an invite. 
 - Follow our Git Flow -> 
+
