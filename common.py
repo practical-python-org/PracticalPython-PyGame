@@ -1,6 +1,5 @@
 import pygame as pg
 
-
 # Colors
 COLORS = {"black": pg.Color('#000000')} #Perhaps more to come?
 
