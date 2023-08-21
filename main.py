@@ -2,6 +2,7 @@ import pygame as pg
 import pygame_gui
 
 from common import COLORS, HEIGHT, WIDTH, FPS
+from utilities.logger import log_info
 
 
 class RunGame:
@@ -87,7 +88,7 @@ class RunGame:
                 if event.type == pygame_gui.UI_BUTTON_PRESSED:
                     for btn in self.buttons:
                         if event.ui_element == btn:
-                            print('Hello World!')
+                            log_info(f'{btn.text} was pressed!')
 
                 self.manager.process_events(event)
 
