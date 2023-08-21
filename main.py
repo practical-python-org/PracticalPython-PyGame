@@ -1,6 +1,3 @@
-"""
-Taken directly from https://pygame-gui.readthedocs.io/en/latest/quick_start.html as a template.
-"""
 import pygame as pg
 import pygame_gui
 
