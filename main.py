@@ -73,10 +73,12 @@ class RunGame:
 
         is_running = True
 
-        map_manager = MapManager(self.window_surface, TILE_SIZE, VERTICAL_TILE_NUM, HORIZONTAL_TILE_NUM)
-
         player_coords = (WIDTH // 2, HEIGHT // 2)
         player = Player(self.window_surface, player_coords[0], player_coords[1], 50, 50)
+
+        map_manager = MapManager(self.window_surface, TILE_SIZE, VERTICAL_TILE_NUM, HORIZONTAL_TILE_NUM)
+        map_manager.load_map()
+        map_manager.enable_debug()
 
         while is_running:
 
@@ -97,20 +99,39 @@ class RunGame:
                         if event.ui_element == btn:
                             log_info(f'{btn.text} was pressed!')
 
+                if event.type == pg.MOUSEBUTTONDOWN and map_manager.debug:
+                    if event.button == 1:
+                        log_info(f'Left mouse button was pressed at {events["mouse pos"]}')
+                        # Create tile based on mouse position at nearest tile
+                        closest_tile = (events["mouse pos"][0] // TILE_SIZE, events["mouse pos"][1] // TILE_SIZE)
+                        log_info(f'Closest tile is {closest_tile}')
+                        # selected_tiles.append(closest_tile)
+                        map_manager.save_map(closest_tile)
+                    if event.button == 3:
+                        log_info(f'Right mouse button was pressed at {events["mouse pos"]}')
+                        # Delete tile based on mouse position at nearest tile
+                        closest_tile = (events["mouse pos"][0] // TILE_SIZE, events["mouse pos"][1] // TILE_SIZE)
+                        log_info(f'Closest tile is {closest_tile}')
+                        map_manager.delete_object(closest_tile)
+
                 self.manager.process_events(event)
-            
+
             self.manager.update(time_delta)
 
             self.window_surface.blit(self.background, (0, 0))
             self.manager.draw_ui(self.window_surface)
 
-            # map_manager.draw_tile_grid()
-            
             player.update()
 
             # Draw UI
             self.manager.draw_ui(self.window_surface)
+            
+            if map_manager.debug:
+                map_manager.draw_tile_grid()
 
+                for tile in map_manager.load_map():
+                    map_manager.render_object("tile", tile)
+                    
             pg.display.update()
 
 
