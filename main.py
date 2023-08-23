@@ -3,6 +3,7 @@ import pygame_gui
 
 from common import COLORS, HEIGHT, WIDTH, FPS, TILE_SIZE, VERTICAL_TILE_NUM, HORIZONTAL_TILE_NUM
 from components.map.mapmanager import MapManager
+from components.characters.player import Player
 from utilities.logger import log_info
 
 
@@ -69,10 +70,13 @@ class RunGame:
 
     
     def game_loop(self):
-        
+
         is_running = True
 
         map_manager = MapManager(self.window_surface, TILE_SIZE, VERTICAL_TILE_NUM, HORIZONTAL_TILE_NUM)
+
+        player_coords = (WIDTH // 2, HEIGHT // 2)
+        player = Player(self.window_surface, player_coords[0], player_coords[1], 50, 50)
 
         while is_running:
 
@@ -94,13 +98,18 @@ class RunGame:
                             log_info(f'{btn.text} was pressed!')
 
                 self.manager.process_events(event)
-
+            
             self.manager.update(time_delta)
 
             self.window_surface.blit(self.background, (0, 0))
             self.manager.draw_ui(self.window_surface)
 
             # map_manager.draw_tile_grid()
+            
+            player.update()
+
+            # Draw UI
+            self.manager.draw_ui(self.window_surface)
 
             pg.display.update()
 
