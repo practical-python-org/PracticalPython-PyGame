@@ -2,8 +2,8 @@ import pygame as pg
 import pygame_gui
 
 from common import COLORS, HEIGHT, WIDTH, FPS
+from components.characters.player import Player
 from utilities.logger import log_info
-
 
 class RunGame:
     def __init__(self):
@@ -68,8 +68,11 @@ class RunGame:
 
     
     def game_loop(self):
-        
+
         is_running = True
+
+        player_coords = (WIDTH // 2, HEIGHT // 2)
+        player = Player(self.window_surface, player_coords[0], player_coords[1], 50, 50)
 
         while is_running:
 
@@ -91,10 +94,15 @@ class RunGame:
                             log_info(f'{btn.text} was pressed!')
 
                 self.manager.process_events(event)
-
+            
             self.manager.update(time_delta)
 
             self.window_surface.blit(self.background, (0, 0))
+            self.manager.draw_ui(self.window_surface)
+
+            player.update()
+
+            # Draw UI
             self.manager.draw_ui(self.window_surface)
 
             pg.display.update()
