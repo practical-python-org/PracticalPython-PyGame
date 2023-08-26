@@ -1,49 +1,31 @@
 import pygame as pg
-import pygame_gui
-
+import pygame_gui as gui
+from home import HomeScreen
+from game import Game
+from settings import Settings
+from other import Other
 from common import COLORS, HEIGHT, WIDTH, FPS
+from pygame_gui.core.interfaces.manager_interface import IUIManagerInterface
 
 
-class RunGame:
+class Run:
     def __init__(self):
+        pg.init()
+        self.game_state = HomeScreen
         self.clock = pg.time.Clock()
         self.screen_size = (WIDTH, HEIGHT)
+        self.btn_names = ['START', 'SETTINGS', 'OTHER']
+        self.btn_class = [Game, Settings, Other]
         self.buttons = list()
         self.init_ui()
+        self.events = self.get_events()
         self.game_loop()
 
-
     def init_ui(self):
-        pg.init()
-        pg.display.set_caption('Quick Start')
         self.window_surface = pg.display.set_mode(self.screen_size)
         self.background = pg.Surface(self.screen_size)
         self.background.fill(COLORS["black"])
-
-        self.manager = pygame_gui.UIManager(self.screen_size)
-
-        self.set_buttons()
-
-
-    def set_buttons(self):
-        def offset_button(top_left):
-            padding = 80
-            top_left[1] += padding
-            return top_left
-
-        btn_width, btn_height = 100, 50
-        top_left = [WIDTH//2 - btn_width//2, btn_height]
-        dimensions = (btn_width, btn_height)
-
-        self.button = pg.Rect(top_left, dimensions)
-        self.btn_names = ['START', 'SETTINGS', 'OTHER']
-        for btn_name in self.btn_names:
-            btn = pygame_gui.elements.UIButton(relative_rect=self.button,
-                                               text=btn_name,
-                                               manager=self.manager)
-            self.buttons.append(btn)
-            self.button = pg.Rect(offset_button(top_left), dimensions)
-
+        self.manager = gui.UIManager(self.screen_size)
 
     def get_events(self):
         """
@@ -55,7 +37,6 @@ class RunGame:
         mouse_pos = pg.mouse.get_pos()
         raw_dt = self.clock.get_time()
         dt = raw_dt * FPS
-
         return {
             "events": events,
             "mouse press": mouse_press,
@@ -65,40 +46,37 @@ class RunGame:
             "dt": dt,
         }
 
-    
+    def event_handler(self, running):
+        for event in self.events["events"]:
+            if event.type == pg.QUIT:
+                return not running
+            if (event.type == gui.UI_BUTTON_PRESSED
+                    and self.buttons):
+                for btn in self.buttons:
+                    if event.ui_element == btn:
+                        self.game_state = self.btn_dict[btn]
+            self.manager.process_events(event)
+
     def game_loop(self):
-        
         is_running = True
-
         while is_running:
-
-            #time_delta = clock.tick(FPS) / 1000.0 
-
             self.clock.tick(FPS)
-
-            events = self.get_events()
-
-            time_delta = events["dt"]
-
-            for event in events["events"]:
-                if event.type == pg.QUIT:
-                    is_running = False
-
-                if event.type == pygame_gui.UI_BUTTON_PRESSED:
-                    for btn in self.buttons:
-                        if event.ui_element == btn:
-                            print('Hello World!')
-
-                self.manager.process_events(event)
-
+            time_delta = self.events["dt"]
+            self.events = self.get_events()
+            tmp = self.event_handler(is_running)
+            # return: bool if event == self.pg.QUIT
+            if tmp is not None:
+                is_running = tmp
+            if self.game_state == HomeScreen:
+                HomeScreen(self)
+            else:  # state changed on button press
+                run = self.game_state
+                run(self)
             self.manager.update(time_delta)
-
             self.window_surface.blit(self.background, (0, 0))
             self.manager.draw_ui(self.window_surface)
-
             pg.display.update()
 
 
-RunGame()
-# Close pygame
+Run()
 pg.quit()
