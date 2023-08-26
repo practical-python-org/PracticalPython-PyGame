@@ -1,7 +1,8 @@
 import pygame as pg
+import matplotlib.colors as mcl
 
 # Colors
-COLORS = {"black": pg.Color('#000000')} #Perhaps more to come?
+COLORS: dict = mcl.CSS4_COLORS
 
 # Tiles and Screen
 TILE_SIZE = 64
