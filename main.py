@@ -10,10 +10,9 @@ from pygame_gui.core.interfaces.manager_interface import IUIManagerInterface
 
 class Run:
     def __init__(self):
-        self.pg, self.gui = pg, gui
-        self.pg.init()
+        pg.init()
         self.game_state = HomeScreen
-        self.clock = self.pg.time.Clock()
+        self.clock = pg.time.Clock()
         self.screen_size = (WIDTH, HEIGHT)
         self.btn_names = ['START', 'SETTINGS', 'OTHER']
         self.btn_class = [Game, Settings, Other]
@@ -23,19 +22,19 @@ class Run:
         self.game_loop()
 
     def init_ui(self):
-        self.window_surface = self.pg.display.set_mode(self.screen_size)
-        self.background = self.pg.Surface(self.screen_size)
+        self.window_surface = pg.display.set_mode(self.screen_size)
+        self.background = pg.Surface(self.screen_size)
         self.background.fill(COLORS["black"])
-        self.manager = self.gui.UIManager(self.screen_size)
+        self.manager = gui.UIManager(self.screen_size)
 
     def get_events(self):
         """
         Returns necessary events for application. Packed in a dictionary.
         """
-        events = self.pg.event.get()
-        mouse_press = self.pg.mouse.get_pressed()
-        keys = self.pg.key.get_pressed()
-        mouse_pos = self.pg.mouse.get_pos()
+        events = pg.event.get()
+        mouse_press = pg.mouse.get_pressed()
+        keys = pg.key.get_pressed()
+        mouse_pos = pg.mouse.get_pos()
         raw_dt = self.clock.get_time()
         dt = raw_dt * FPS
         return {
@@ -49,9 +48,9 @@ class Run:
 
     def event_handler(self, running):
         for event in self.events["events"]:
-            if event.type == self.pg.QUIT:
+            if event.type == pg.QUIT:
                 return not running
-            if (event.type == self.gui.UI_BUTTON_PRESSED
+            if (event.type == gui.UI_BUTTON_PRESSED
                     and self.buttons):
                 for btn in self.buttons:
                     if event.ui_element == btn:
@@ -76,7 +75,7 @@ class Run:
             self.manager.update(time_delta)
             self.window_surface.blit(self.background, (0, 0))
             self.manager.draw_ui(self.window_surface)
-            self.pg.display.update()
+            pg.display.update()
 
 
 Run()
